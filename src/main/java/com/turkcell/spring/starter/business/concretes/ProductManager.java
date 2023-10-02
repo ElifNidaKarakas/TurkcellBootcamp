@@ -1,40 +1,32 @@
 package com.turkcell.spring.starter.business.concretes;
 
 import com.turkcell.spring.starter.business.abstracts.ProductService;
-import com.turkcell.spring.starter.entities.Product;
-import lombok.AllArgsConstructor;
+import com.turkcell.spring.starter.entities.dtos.product.ProductForListingDto;
+import com.turkcell.spring.starter.entities.dtos.product.ProductForGetByIdDto;
+import com.turkcell.spring.starter.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class ProductManager implements ProductService {
 
-    @Override
-    public void add(Product product) {
+    private final ProductRepository productRepository;
 
+    public ProductManager(ProductRepository productRepository) {
+
+        this.productRepository = productRepository;
+    }
+
+
+    @Override
+    public List<ProductForListingDto> getAll() {
+
+        return productRepository.getForListing();
     }
 
     @Override
-    public List<Product> getAll() {
-
+    public List<ProductForGetByIdDto> getById(int id) {
         return null;
-    }
-
-    @Override
-    public Product getById(int id) {
-
-        return null;
-    }
-
-    @Override
-    public void update(Product product) {
-
-    }
-
-    @Override
-    public void delete(int id) {
-
     }
 }

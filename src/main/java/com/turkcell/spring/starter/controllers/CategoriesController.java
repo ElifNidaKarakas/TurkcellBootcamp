@@ -1,8 +1,10 @@
 package com.turkcell.spring.starter.controllers;
 
+import com.turkcell.spring.starter.business.abstracts.CategoryService;
 import com.turkcell.spring.starter.entities.Category;
-import com.turkcell.spring.starter.repositories.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.turkcell.spring.starter.entities.dtos.category.CategoryForAddDto;
+import com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,47 +13,51 @@ import java.util.List;
 
 @RestController
 @RequestMapping("categories")
-// localhost:8080/categories
 public class CategoriesController {
-    // CategoryService
 
     // DI
     // Spring IoC => Bağımlılıkların çözümlenmesi..
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    @Autowired   //bağımlılıkları otomatik olarak başlatır
-    public CategoriesController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoriesController(CategoryService categoryService) {
+
+        this.categoryService = categoryService;
     }
 
     @GetMapping()
-    public List<Category> getCategories() {
-        List<Category> categoriesInDb = categoryRepository.findAll();
+    public List<CategoryForListingDto> getCategories()
+    {
+        // Category => PostgreSQL'deki tablo
+        List<CategoryForListingDto> categoriesInDb = categoryService.getAll();
         return categoriesInDb;
     }
-    @GetMapping("search")
-    public List<Category> search(@RequestParam("name") String name){
-        List<Category> categories = categoryRepository.searchNative(name);
-        return categories;
-    }
+
     @GetMapping("getByName")
     public List<Category> getCategoriesByName(@RequestParam("name") String name){
-        List<Category> categories = categoryRepository.findByCategoryNameContaining(name);
-        return categories;
+        //List<Category> categories = categoryRepository.findByCategoryNameContaining(name);
+        return null;
     }
 
+    @GetMapping("search")
+    public List<Category> search(@RequestParam("name") String name){
+        //List<Category> categories = categoryRepository.searchNative(name);
+        return null;
+    }
 
     @GetMapping("getById")
-    public Category getCategoryById(@RequestParam("id") int id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
-        return category;
+    public Category getCategoryById(@RequestParam("id") int id){
+        //Category category = categoryRepository.findById(id).orElseThrow();
+        return null;
     }
 
     @PostMapping()
-    public ResponseEntity add(@RequestBody Category category) {
-        categoryRepository.save(category);
+    public ResponseEntity add(@RequestBody @Valid CategoryForAddDto request){
+        // Manual Mapleme
+        // Auto Mapper => ModelMapper
+        Category category = new Category();
+        category.setCategoryName(request.getCategoryName());
+        category.setDescription(request.getDescription());
+        //categoryRepository.save(category);
         return new ResponseEntity("Kategori eklendi", HttpStatus.CREATED);
     }
-
-
 }

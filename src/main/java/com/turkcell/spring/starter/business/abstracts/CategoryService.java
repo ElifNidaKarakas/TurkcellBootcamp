@@ -1,13 +1,13 @@
 package com.turkcell.spring.starter.business.abstracts;
 
-import com.turkcell.spring.starter.entities.Category;
+import com.turkcell.spring.starter.entities.dtos.category.CategoryForAddDto;
+import com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto;
 
 import java.util.List;
 
 public interface CategoryService {
-    void add(Category category);
-    List<Category> getAll();
-    Category getById(int id);
-    void update (Category category);
-    void delete(int id);
+    // Serviceler entityleri değil dtoları kullanmalı..
+    List<CategoryForListingDto> getAll();
+    void add(CategoryForAddDto request);
+    void update();
 }
