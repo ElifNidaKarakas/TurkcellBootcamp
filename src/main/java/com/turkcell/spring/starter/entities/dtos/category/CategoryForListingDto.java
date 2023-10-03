@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CategoryForListingDto {
     private int categoryId;
     private String categoryName;
+    private String description;
 }

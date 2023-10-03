@@ -8,13 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ProductRepository extends JpaRepository<Product,Integer> {
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    @Query(value="SELECT new " +
-            "com.turkcell.spring.starter.entities.dtos.product.ProductForListingDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.unit_in_stock,p.units_on_order,p.discontinued) FROM Product p")
+    Product findByName(String productName);
+    Product findById(int id);
+
+    @Query(value = "SELECT new " +
+            "com.turkcell.spring.starter.entities.dtos.product.ProductForListingDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.units_in_stock,p.units_on_order,p.discontinued) FROM Product p")
     List<ProductForListingDto> getForListing();
 
-    @Query(value="SELECT new " +
-            "com.turkcell.spring.starter.entities.dtos.product.ProductForGetByIdDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.unit_in_stock,p.units_on_order) FROM Product p")
+    @Query(value = "SELECT new " +
+            "com.turkcell.spring.starter.entities.dtos.product.ProductForGetByIdDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.units_in_stock,p.units_on_order) FROM Product p")
     List<ProductForGetByIdDto> getForIdListing();
 }

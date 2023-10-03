@@ -4,6 +4,7 @@ import com.turkcell.spring.starter.business.abstracts.CategoryService;
 import com.turkcell.spring.starter.entities.Category;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForAddDto;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto;
+import com.turkcell.spring.starter.entities.dtos.category.CategoryForUpdateDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,6 @@ import java.util.List;
 @RequestMapping("categories")
 public class CategoriesController {
 
-    // DI
-    // Spring IoC => Bağımlılıkların çözümlenmesi..
     private final CategoryService categoryService;
 
     public CategoriesController(CategoryService categoryService) {
@@ -27,7 +26,6 @@ public class CategoriesController {
     @GetMapping()
     public List<CategoryForListingDto> getCategories()
     {
-        // Category => PostgreSQL'deki tablo
         List<CategoryForListingDto> categoriesInDb = categoryService.getAll();
         return categoriesInDb;
     }
@@ -52,12 +50,18 @@ public class CategoriesController {
 
     @PostMapping()
     public ResponseEntity add(@RequestBody @Valid CategoryForAddDto request){
-        // Manual Mapleme
-        // Auto Mapper => ModelMapper
-        Category category = new Category();
-        category.setCategoryName(request.getCategoryName());
-        category.setDescription(request.getDescription());
-        //categoryRepository.save(category);
+        categoryService.add(request);
         return new ResponseEntity("Kategori eklendi", HttpStatus.CREATED);
+    }
+    @PutMapping()
+    public ResponseEntity updateCategory(@PathVariable int id, @RequestBody @Valid CategoryForUpdateDto updateDto) {
+        categoryService.updateCategory(id, updateDto);
+        return new ResponseEntity("Kategori güncellendi", HttpStatus.CREATED);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity deleteCategory(@PathVariable("categoryId") int categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return new ResponseEntity("Kategori silindi", HttpStatus.OK);
     }
 }

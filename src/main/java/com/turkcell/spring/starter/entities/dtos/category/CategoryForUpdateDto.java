@@ -4,10 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-@Data // Getter+Setter
-public class CategoryForAddDto {
+@Data
+public class CategoryForUpdateDto {
+    @NotBlank(message = "Id girmek zorunludur!")
+    private int id;
+
     @NotBlank(message = "Kategori adı girmek zorunludur!")
-    @Size(min=3)
+    @Size(min = 3)
     private String categoryName;
 
     @NotBlank(message = "Açıklama girmek zorunludur!")

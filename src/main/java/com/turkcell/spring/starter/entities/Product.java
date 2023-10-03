@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Table(name = "products")
@@ -17,20 +19,21 @@ public class Product {
     @Column(name = "product_name")
     private String name;
 
-    @Column(name = "supplier_id")
-    private int supplier_id;
+    @ManyToMany
+    @JoinColumn(name = "supplier_id")
+    private List<Supplier> supplier;
 
     @Column(name = "quantity_per_unit")
     private String quantity_per_unit;
 
     @Column(name = "unit_price")
-    private int unit_price;
+    private float unit_price;
 
-    @Column(name = "unit_in_stock")
-    private int unit_in_stock;
+    @Column(name = "units_in_stock")
+    private int units_in_stock;
 
     @Column(name = "units_on_order")
-    private  short units_on_order;
+    private int  units_on_order;
 
     @Column(name = "reorder_level")
     private String reorder_level;

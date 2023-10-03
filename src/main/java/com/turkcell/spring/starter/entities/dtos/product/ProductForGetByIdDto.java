@@ -8,10 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductForGetByIdDto {
+
+
     private int id;
     private String name;
     private String quantity_per_unit;
-    private int unit_price;
-    private int unit_in_stock;
-    private  String units_on_order;
+    private float unit_price;
+    private int units_in_stock;
+    private int   units_on_order;
+
 }
