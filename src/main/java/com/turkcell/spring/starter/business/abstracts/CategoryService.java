@@ -12,7 +12,7 @@ public interface CategoryService {
 
     void add(CategoryForAddDto request);
 
-    void updateCategory(int categoryId, CategoryForUpdateDto category);
+    void updateCategory(CategoryForUpdateDto category);
 
     void deleteCategory(int categoryId);
 }

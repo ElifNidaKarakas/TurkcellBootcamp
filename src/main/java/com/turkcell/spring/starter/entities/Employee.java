@@ -1,20 +1,25 @@
 package com.turkcell.spring.starter.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name="employees")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Employee {
     @Id
     @Column(name = "employee_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short employeeId;
 
     @Column(name = "last_name")
@@ -67,5 +72,8 @@ public class Employee {
 
     @Column(name = "photo_path")
     private String photoPath;
+
+    @OneToMany(mappedBy = "employee")
+    private List<Order> orders;
 
 }

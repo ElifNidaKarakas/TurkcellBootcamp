@@ -1,9 +1,6 @@
 package com.turkcell.spring.starter.entities.dtos.product;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +19,7 @@ public class ProductForUpdateDto {
 
     private String quantity_per_unit;
 
+    @NotNull(message = "Fiyat bilgisi boş geçilemez")
     @Min(value = 0, message = "Fiyat değeri 0'dan küçük olamaz")
     private int unit_price;
 
@@ -29,5 +27,13 @@ public class ProductForUpdateDto {
     private int unit_in_stock;
 
     private String reorder_level;
+
+    @NotBlank(message = "supplier_id boş bırakılamaz")
+    @Min(1)
+    private  int supplier_id;
+
+    @NotBlank(message = "category_id boş bırakılamaz")
+    @Min(1)
+    private int category_id;
 
 }

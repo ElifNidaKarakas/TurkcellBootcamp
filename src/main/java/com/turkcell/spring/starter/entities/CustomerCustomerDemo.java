@@ -1,9 +1,6 @@
 package com.turkcell.spring.starter.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -11,6 +8,7 @@ import lombok.Data;
 @Table(name="customer_customer_demo")
 public class CustomerCustomerDemo {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="customer_id") //postgrede ki kolon ismi
     private String customerId;
 

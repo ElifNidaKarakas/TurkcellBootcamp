@@ -1,17 +1,23 @@
 package com.turkcell.spring.starter.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "customers")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Customer {
     @Id
     @Column(name = "customer_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String customerId;
 
     @Column(name = "company_id")
@@ -43,5 +49,8 @@ public class Customer {
 
     @Column(name = "fax")
     private String fax;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Order> order;
 
 }

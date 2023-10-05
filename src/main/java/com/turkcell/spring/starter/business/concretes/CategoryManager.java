@@ -43,11 +43,10 @@ public class CategoryManager implements CategoryService {
         // Business Rule => Aynı isimde iki kategori olmamalı
 
         categoryWithSameNameShouldNotExist(request.getCategoryName());
-        categoryNameCanNotBeEmpty(request.getCategoryName());
         this.categoryShouldNotBeMoreThan10();
         categoryWithDescriptionLengthGreaterThanCategoryNameLength(request.getDescription(), request.getCategoryName());
 
-        Category category = new Category();
+        Category category = Category.builder().build();
         category.setCategoryName(request.getCategoryName());
         category.setDescription(request.getDescription());
 
@@ -56,13 +55,8 @@ public class CategoryManager implements CategoryService {
     }
 
     @Override
-    public void updateCategory(int categoryId, CategoryForUpdateDto category) {
-        this.checkIfCategoryExistById(categoryId);
-        this.categoryShouldNotBeMoreThan10();
-        categoryWithDescriptionLengthGreaterThanCategoryNameLength(category.getDescription(), category.getCategoryName());
-
-        Category updateCategory = new Category();
-        updateCategory.setCategoryId(category.getId());
+    public void updateCategory(CategoryForUpdateDto category) {
+        Category updateCategory = returnCategoryByIdIfExists(category.getId());
         updateCategory.setCategoryName(category.getCategoryName());
         updateCategory.setDescription(category.getDescription());
         categoryRepository.save(updateCategory);
@@ -71,24 +65,22 @@ public class CategoryManager implements CategoryService {
 
     @Override
     public void deleteCategory(int categoryId) {
-        this.checkIfCategoryExistById(categoryId);
-        Category category = categoryRepository.findById(categoryId);
-        categoryRepository.deleteById(categoryId);
+        Category category = returnCategoryByIdIfExists(categoryId);
+        categoryRepository.delete(category);
 
     }
 
+    private Category returnCategoryByIdIfExists(int categoryId) {
+        Category categoryToDelete = categoryRepository.findById(categoryId);
+        if (categoryToDelete == null)
+            throw new BusinessException("Böyle bir kategori bulunamadı.");
+        return categoryToDelete;
+    }
 
     private void categoryWithSameNameShouldNotExist(String categoryName) {
         Category categoryWithSameName = categoryRepository.findByCategoryName(categoryName);
         if (categoryWithSameName != null) {
             throw new BusinessException("Aynı kategori isminden 2 kategori bulunamaz.");
-        }
-    }
-
-    private void categoryNameCanNotBeEmpty(String categoryName) {
-        Category categoryNameEmpty = categoryRepository.findByCategoryName(categoryName);
-        if (categoryNameEmpty == null) {
-            throw new BusinessException("kategori adı boş olamaz");
         }
     }
 
@@ -103,14 +95,6 @@ public class CategoryManager implements CategoryService {
         if (category.size() >= 10) {
             throw new BusinessException("10'dan fazla kategori bulunamaz.");
         }
-    }
-
-    private void checkIfCategoryExistById(int id) {
-        Category category = categoryRepository.findById(id);
-        if (category == null) {
-            throw new BusinessException("id değeri bulunamadı ");
-        }
-
 
     }
 }

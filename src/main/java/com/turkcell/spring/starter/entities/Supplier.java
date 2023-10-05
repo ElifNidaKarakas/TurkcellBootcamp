@@ -1,17 +1,23 @@
 package com.turkcell.spring.starter.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "suppliers")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Supplier {
     @Id
     @Column(name="supplier_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int supplierId;
     @Column(name="company_name")
     private String companyName;
@@ -35,4 +41,7 @@ public class Supplier {
     private String fax;
     @Column(name="homepage")
     private String homepage;
+
+    @OneToMany(mappedBy = "supplier")
+    private List<Product> products;
 }

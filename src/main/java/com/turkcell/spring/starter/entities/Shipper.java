@@ -1,9 +1,6 @@
 package com.turkcell.spring.starter.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -12,6 +9,7 @@ import lombok.Data;
 public class Shipper {
     @Id
     @Column(name="shipper_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int shipperId;
 
     @Column(name="company_name")

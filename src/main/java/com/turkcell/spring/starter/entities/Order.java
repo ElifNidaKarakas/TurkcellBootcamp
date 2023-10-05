@@ -4,24 +4,22 @@ import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "orders")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
     @Id
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
-
-    @ManyToMany()
-    @JoinColumn(name = "customer_id")
-    private List<Customer> customer;
-
-    @ManyToMany()
-    @JoinColumn(name = "employee_id")
-    private List<Employee> employee;
 
     @Column(name = "order_date")
     private LocalDate orderDate;
@@ -32,7 +30,7 @@ public class Order {
     @Column(name = "ship_via")
     private int shipVia;
     @Column(name = "freight")
-    private String freight;
+    private float freight;
     @Column(name = "ship_name")
     private String shipName;
     @Column(name = "ship_address")
@@ -45,4 +43,16 @@ public class Order {
     private String shipPostalCode;
     @Column(name = "ship_country")
     private String shipCountry;
+
+    //Many order classı one employee
+    @ManyToOne()
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    @ManyToOne()
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails;
 }

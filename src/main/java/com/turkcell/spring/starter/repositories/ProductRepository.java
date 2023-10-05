@@ -13,6 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Product findByName(String productName);
     Product findById(int id);
 
+
     @Query(value = "SELECT new " +
             "com.turkcell.spring.starter.entities.dtos.product.ProductForListingDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.units_in_stock,p.units_on_order,p.discontinued) FROM Product p")
     List<ProductForListingDto> getForListing();

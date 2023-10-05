@@ -19,6 +19,7 @@ public class ProductController {
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
+
         this.productService = productService;
     }
 
@@ -34,12 +35,6 @@ public class ProductController {
         return productsInIdDb;
     }
 
-    @GetMapping("getById")
-    public Product getById(@RequestParam("id") int id) {
-        //Product product = productRepository.findById(id).orElseThrow();
-        return null;
-
-    }
 
     @PostMapping()
     public ResponseEntity addProduct(@RequestBody @Valid ProductForAddDto request) {
@@ -54,8 +49,8 @@ public class ProductController {
     }
 
     @DeleteMapping()
-    public ResponseEntity deleteProduct(@PathVariable("productId") int productId) {
-        productService.deleteProduct(productId);
+    public ResponseEntity deleteProduct(@PathVariable("id") int id) {
+        productService.deleteProduct(id);
         return new ResponseEntity("Ürün silindi", HttpStatus.OK);
     }
 }

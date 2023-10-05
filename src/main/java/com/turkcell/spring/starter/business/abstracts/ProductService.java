@@ -13,5 +13,5 @@ public interface ProductService {
     void add(ProductForAddDto request);
     void updateProduct(int productId, ProductForUpdateDto product);
 
-    void deleteProduct(int productId);
+    void deleteProduct(int id);
 }

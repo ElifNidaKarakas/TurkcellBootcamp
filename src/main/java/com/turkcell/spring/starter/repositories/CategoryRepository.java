@@ -15,7 +15,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Category findById(int id);
 
 
-
     // Native SQL
     // JPQL => JPA'nın SQL'e neredeyse birebir benzer versiyonu..
     // JPQL => Tablo ismi yerine entity yazmak
@@ -33,7 +32,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     List<Category> searchNative(String categoryName);
 
     @Query(value="SELECT new " +
-            "com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto(c.categoryId, c.categoryName) FROM Category c")
+            "com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto(c.categoryId, c.categoryName, c.description) FROM Category c")
     List<CategoryForListingDto> getForListing();
 }
 
