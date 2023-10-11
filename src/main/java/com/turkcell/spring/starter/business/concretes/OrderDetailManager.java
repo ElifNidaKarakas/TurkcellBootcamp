@@ -1,6 +1,7 @@
 package com.turkcell.spring.starter.business.concretes;
 
 import com.turkcell.spring.starter.business.abstracts.OrderDetailService;
+import com.turkcell.spring.starter.business.abstracts.ProductService;
 import com.turkcell.spring.starter.entities.Order;
 import com.turkcell.spring.starter.entities.OrderDetail;
 import com.turkcell.spring.starter.entities.Product;
@@ -13,9 +14,11 @@ import java.util.List;
 @Service
 public class OrderDetailManager implements OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
+    private final ProductService productService;
 
-    public OrderDetailManager(OrderDetailRepository orderDetailRepository) {
+    public OrderDetailManager(OrderDetailRepository orderDetailRepository, ProductService productService) {
         this.orderDetailRepository = orderDetailRepository;
+        this.productService = productService;
     }
 
     @Override
@@ -30,5 +33,22 @@ public class OrderDetailManager implements OrderDetailService {
                     .build();
             orderDetailRepository.save(od);
         }
+    }
+
+    @Override
+    public List<Object> getForListing() {
+        return orderDetailRepository.getForListing();
+    }
+
+    //Eğer ilgili üründen talep edilen adet kadar yoksa adet verilebilecek max. stok olarak güncellenmelidir.
+    private short RequestedProductCannotExceedTheNumberOfProductsInStock(short quantity, int productID) {
+
+        short unitsInStock = productService.getUnitInStock(productID);
+        if (quantity > unitsInStock) {
+            //   productService.setUnitInStock(unitsInStock,productID);
+            return unitsInStock;
+        }
+        //  productService.setUnitInStock(quantity,productID);
+        return quantity;
     }
 }

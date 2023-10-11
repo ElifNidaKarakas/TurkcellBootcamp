@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderDetail {
     @Id
-    @Column(name="id")
+    @Column(name="order_details_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="product_id")
-    private int productId;
+   /* @Column(name="product_id")
+    private int productId;*/
 
     @Column(name="unit_price")
     private int unitPrice;

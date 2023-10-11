@@ -3,6 +3,9 @@ package com.turkcell.spring.starter.controllers;
 // CTRL + SPACE => Intelissense'i triggerlar
 
 import com.turkcell.spring.starter.entities.Product;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,24 +16,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("home")
-// http://localhost:8080/home
-// http://localhost:8080/home/index
-// http://localhost:8080/home/categories
-
-// METHOD => GET,POST,PUT,DELETE...
-
-
-// GET => Cevap olarak bir kaynak dönüleceği durumlarda kullanılır. Örn: ürünleri listeleme fonksiyonu
-// POST => Bir kaynak oluşturulması isteği durumlarında kullanılır. Örn: ürün ekleme fonksiyonu
-// PUT => Bir kaynağın değiştirilmesi isteği durumunda kullanılır. Örn: ürün güncellenmesi.
-// DELETE => Bir kaynağın silinmesi isteği durumunda kullanılır. Örn: ürünün dbden silinmesi.
-public class HomeController {
+@RequiredArgsConstructor
+    public class HomeController {
+    private final MessageSource messageSource;
     List<Product> productList = new ArrayList<>();
 
     // http://localhost:8080/home GET İSTEĞİ
     @GetMapping("")
     public String get(){
-        return "Merhaba Turkcell";
+
+        return messageSource.getMessage("hello", null, LocaleContextHolder.getLocale());
     }
 
     // http://localhost:8080/home POST İSTEĞİ

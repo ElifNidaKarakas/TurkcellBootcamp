@@ -1,56 +1,43 @@
 package com.turkcell.spring.starter.business.concretes;
 
 import com.turkcell.spring.starter.business.abstracts.CategoryService;
-import com.turkcell.spring.starter.business.exceptions.BusinessException;
+import com.turkcell.spring.starter.core.exceptions.BusinessException;
 import com.turkcell.spring.starter.entities.Category;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForAddDto;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForUpdateDto;
 import com.turkcell.spring.starter.repositories.CategoryRepository;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryManager implements CategoryService {
     private final CategoryRepository categoryRepository;
-
-    public CategoryManager(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
-
+    private final MessageSource messageSource;
     @Override
     public List<CategoryForListingDto> getAll() {
-        // DTO => Data Transfer Object
-
-/*   BAD PRACTICE !!
-        List<Category> categories = categoryRepository.findAll();
-        List<CategoryForListingDto> categoryForListingDtos = new ArrayList<>();
-
-        // Mapleme
-        for (Category c: categories) {
-            CategoryForListingDto dto = new CategoryForListingDto();
-            dto.setCategoryId(c.getCategoryId());
-            dto.setCategoryName(c.getCategoryName());
-            categoryForListingDtos.add(dto);
-        }
-*/
         return categoryRepository.getForListing();
     }
 
     @Override
     public void add(CategoryForAddDto request) {
-        // Business Rule => Aynı isimde iki kategori olmamalı
 
         categoryWithSameNameShouldNotExist(request.getCategoryName());
-        this.categoryShouldNotBeMoreThan10();
+        categoryShouldNotBeMoreThan10();
         categoryWithDescriptionLengthGreaterThanCategoryNameLength(request.getDescription(), request.getCategoryName());
+        categoryNameCanNotBeEmpty(request.getCategoryName());
 
         Category category = Category.builder().build();
         category.setCategoryName(request.getCategoryName());
         category.setDescription(request.getDescription());
 
-        // Mapleme işlemi business içerisinde
         categoryRepository.save(category);
     }
 
@@ -73,16 +60,25 @@ public class CategoryManager implements CategoryService {
     private Category returnCategoryByIdIfExists(int categoryId) {
         Category categoryToDelete = categoryRepository.findById(categoryId);
         if (categoryToDelete == null)
-            throw new BusinessException("Böyle bir kategori bulunamadı.");
+            throw new BusinessException(
+                    messageSource.getMessage("categoryDoesNotExistWithGivenId", new Object[] {categoryId}, LocaleContextHolder.getLocale()));
         return categoryToDelete;
     }
-
     private void categoryWithSameNameShouldNotExist(String categoryName) {
         Category categoryWithSameName = categoryRepository.findByCategoryName(categoryName);
         if (categoryWithSameName != null) {
-            throw new BusinessException("Aynı kategori isminden 2 kategori bulunamaz.");
+            throw new BusinessException(
+                    messageSource.getMessage("categoryAllReady", null
+                            , LocaleContextHolder.getLocale()));
+
         }
     }
+    private void categoryNameCanNotBeEmpty(String categoryName) {
+        Category categoryNameIsEmpty = categoryRepository.findByCategoryName(categoryName);
+        if (categoryNameIsEmpty != null)
+            throw new BusinessException
+                    (messageSource.getMessage("categoryNotEmpty", null, LocaleContextHolder.getLocale()));    }
+
 
     public void categoryWithDescriptionLengthGreaterThanCategoryNameLength(String description, String categoryName) {
         if (categoryName.length() > description.length()) {
@@ -95,6 +91,5 @@ public class CategoryManager implements CategoryService {
         if (category.size() >= 10) {
             throw new BusinessException("10'dan fazla kategori bulunamaz.");
         }
-
     }
 }

@@ -9,31 +9,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductForUpdateDto {
-    @NotBlank(message = "id alanı boş bırakılamaz!")
     private int id;
 
-    @NotBlank(message = "İsim alanı boş bırakılamaz!")
-    @Size(min = 3, max = 50)
+    @Size(min = 3, message = "{productNameShouldBeMinimum}")
     private String name;
 
-
+    @Min(value = 1, message = "{minOne}")
     private String quantity_per_unit;
 
-    @NotNull(message = "Fiyat bilgisi boş geçilemez")
-    @Min(value = 0, message = "Fiyat değeri 0'dan küçük olamaz")
+    @NotNull(message = "{notNull}")
+    @PositiveOrZero(message = "{zeroOrThan}")
     private int unit_price;
 
-    @PositiveOrZero(message = "Stoktaki ürün sayısı 0 veya daha büyük olmalıdır.")
+    @PositiveOrZero(message = "{zeroOrThan}")
     private int unit_in_stock;
 
     private String reorder_level;
 
-    @NotBlank(message = "supplier_id boş bırakılamaz")
-    @Min(1)
+    @PositiveOrZero(message = "{zeroOrThan}")
+    @NotNull(message = "{notNull}")
     private  int supplier_id;
 
-    @NotBlank(message = "category_id boş bırakılamaz")
-    @Min(1)
+    @PositiveOrZero(message = "{zeroOrThan}")
+    @NotNull(message = "{notNull}")
     private int category_id;
 
 }

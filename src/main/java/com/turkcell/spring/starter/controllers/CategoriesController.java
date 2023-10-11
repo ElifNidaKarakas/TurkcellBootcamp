@@ -1,12 +1,14 @@
 package com.turkcell.spring.starter.controllers;
 
 import com.turkcell.spring.starter.business.abstracts.CategoryService;
-import com.turkcell.spring.starter.business.exceptions.BusinessException;
 import com.turkcell.spring.starter.entities.Category;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForAddDto;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto;
 import com.turkcell.spring.starter.entities.dtos.category.CategoryForUpdateDto;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +17,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("categories")
+@RequiredArgsConstructor
 public class CategoriesController {
 
     private final CategoryService categoryService;
-
-    public CategoriesController(CategoryService categoryService) {
-
-        this.categoryService = categoryService;
-    }
+    private final MessageSource messageSource;
 
     @GetMapping()
     public List<CategoryForListingDto> getCategories() {
@@ -51,17 +50,22 @@ public class CategoriesController {
     @PostMapping()
     public ResponseEntity add(@RequestBody @Valid CategoryForAddDto request) {
         categoryService.add(request);
-        return new ResponseEntity("Kategori eklendi", HttpStatus.CREATED);
+        return new ResponseEntity(messageSource.getMessage("categoryAdded", new Object[]{
+                request.getCategoryName()}, LocaleContextHolder.getLocale()), HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public void updateCategory(@RequestBody @Valid CategoryForUpdateDto updateDto) {
-        categoryService.updateCategory(updateDto);
-
+    public ResponseEntity updateCategory(@RequestBody @Valid CategoryForUpdateDto updateDto) {
+        return new ResponseEntity(messageSource.getMessage("categoryUpdated", new Object[]{
+                updateDto.getCategoryName()}, LocaleContextHolder.getLocale()), HttpStatus.OK);
     }
 
+
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") int id) {
-        categoryService.deleteCategory(id);
+    public ResponseEntity delete(@PathVariable("id") int id) {
+
+        return new ResponseEntity(messageSource.getMessage("categoryDeleted", new Object[]
+                {id}, LocaleContextHolder.getLocale()), HttpStatus.OK);
+
     }
 }

@@ -5,6 +5,8 @@ import com.turkcell.spring.starter.entities.dtos.order.OrderForAddDto;
 import com.turkcell.spring.starter.entities.dtos.order.OrderForListingDto;
 import com.turkcell.spring.starter.entities.dtos.order.OrderForUpdateDto;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("orders")
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+    private final MessageSource messageSource;
 
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
     @GetMapping()
     public List<OrderForListingDto> getOrders() {
         List<OrderForListingDto> ordersInDb = orderService.getAll();

@@ -1,7 +1,7 @@
 package com.turkcell.spring.starter.business.concretes;
 
 import com.turkcell.spring.starter.business.abstracts.ProductService;
-import com.turkcell.spring.starter.business.exceptions.BusinessException;
+import com.turkcell.spring.starter.core.exceptions.BusinessException;
 import com.turkcell.spring.starter.entities.Category;
 import com.turkcell.spring.starter.entities.Product;
 import com.turkcell.spring.starter.entities.Supplier;
@@ -10,21 +10,22 @@ import com.turkcell.spring.starter.entities.dtos.product.ProductForGetByIdDto;
 import com.turkcell.spring.starter.entities.dtos.product.ProductForListingDto;
 import com.turkcell.spring.starter.entities.dtos.product.ProductForUpdateDto;
 import com.turkcell.spring.starter.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductManager implements ProductService {
 
     private final ProductRepository productRepository;
-
-    @Autowired
-    public ProductManager(ProductRepository productRepository) {
-
-        this.productRepository = productRepository;
-    }
+    private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
 
 
     @Override
@@ -38,6 +39,24 @@ public class ProductManager implements ProductService {
 
         return productRepository.getForIdListing();
     }
+    public float getByUnitPrice(int id) {
+
+        return productRepository.findById(id).getUnit_price();
+    }
+
+    @Override
+    public short getUnitInStock(int id) {
+        return (short) productRepository.findById(id).getUnits_in_stock();
+    }
+
+    //Siparişe eklenen her ürünün stok adeti quantity kadar azaltılmalıdır. +
+    public void setUnitInStock(short quantity, int id) {
+        Product product = productRepository.findById(id);
+        product.setUnits_in_stock((short) (product.getUnits_in_stock() - quantity));
+        productRepository.save(product);
+
+    }
+
 
     public void add(ProductForAddDto request) {
         productWithSameNameShouldNotExist(request.getName());
@@ -51,34 +70,10 @@ public class ProductManager implements ProductService {
                 .discontinued(0)
                 .build();
 
-        /* Builderin alternatifi
-        Product newProduct2 = new Product();
-        newProduct2.setName(request.getProductName());
-        Category category = new Category();
-        category.setCategoryId(request.getCategoryId());
-        newProduct2.setCategory(category);
-         */
 
         productRepository.save(newProduct);
     }
 
-       /* product.setName(request.getName());
-        product.setQuantity_per_unit(request.getQuantity_per_unit());
-        product.setUnit_price(request.getUnit_price());
-        product.setUnits_in_stock(request.getUnit_in_stock());
-        product.setReorder_level(request.getReorder_level());
-        product.setDiscontinued(request.getDiscontinued());
-
-        Supplier supplier = new Supplier();
-        supplier.setSupplierId(request.getSupplier_id());
-
-        Category category = new Category();
-        category.setCategoryId(request.getCategory_id());
-
-        // Ürün nesnesine Supplier ve Category nesnelerini atarız
-
-        //product.setSupplier(supplier);
-        product.setCategory(category);*/
 
     @Override
     public void updateProduct(int productId, ProductForUpdateDto updateProduct) {
@@ -112,10 +107,12 @@ public class ProductManager implements ProductService {
     @Override
     public void deleteProduct(int id) {
         this.checkIfProductExistById(id);
+        Product productToDelete = returnProductByIdIfExists(id);
 
-        Product product = productRepository.findById(id);
-        productRepository.deleteById(id);
+        productRepository.delete(productToDelete);
+
     }
+
 
     private void productMinUnitPrice(ProductForAddDto request) {
         if (request.getUnit_price() < 0) {
@@ -142,8 +139,18 @@ public class ProductManager implements ProductService {
     private void productWithSameNameShouldNotExist(String productName) {
         Product productWithSameName = productRepository.findByName(productName);
         if (productWithSameName != null) {
-            throw new BusinessException("Bu ürün ismi eklenmiş.Aynı ürün isminden 2 ürün bulunamaz lütfen değiştiriniz.");
+            throw new BusinessException
+                    (messageSource.getMessage("productNameAllReady", null, LocaleContextHolder.getLocale()));
         }
 
     }
+    private Product returnProductByIdIfExists(int id) {
+        Product productToDelete = productRepository.findById(id);
+        if (productToDelete == null)
+            //throw new BusinessException("Böyle bir ürün bulunamadı.");
+            throw new BusinessException
+                    (messageSource.getMessage("productNotFound", null, LocaleContextHolder.getLocale()));
+        return productToDelete;
+    }
+
 }

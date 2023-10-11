@@ -14,4 +14,10 @@ public interface ProductService {
     void updateProduct(int productId, ProductForUpdateDto product);
 
     void deleteProduct(int id);
+
+    float getByUnitPrice(int id);
+
+    short getUnitInStock(int id);
+
+    void setUnitInStock(short quantity,int id);
 }

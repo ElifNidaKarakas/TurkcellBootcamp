@@ -8,7 +8,6 @@ import lombok.Data;
 @Table(name="customer_customer_demo")
 public class CustomerCustomerDemo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="customer_id") //postgrede ki kolon ismi
     private String customerId;
 

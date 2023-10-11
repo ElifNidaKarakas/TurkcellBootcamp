@@ -11,7 +11,14 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Product findByName(String productName);
+
     Product findById(int id);
+
+    List<Product> UnitsInStockGreaterThanEqual(short UnitsInStock);
+
+    List<Product> findByQuantityUnitIsNotNull();
+
+    List<Product> findByQuantityUnitIsNull();
 
 
     @Query(value = "SELECT new " +
@@ -21,4 +28,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT new " +
             "com.turkcell.spring.starter.entities.dtos.product.ProductForGetByIdDto(p.id,p.name,p.quantity_per_unit,p.unit_price,p.units_in_stock,p.units_on_order) FROM Product p")
     List<ProductForGetByIdDto> getForIdListing();
+
 }

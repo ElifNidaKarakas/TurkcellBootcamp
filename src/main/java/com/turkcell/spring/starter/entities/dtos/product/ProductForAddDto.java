@@ -7,21 +7,23 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductForAddDto {
-    @Size(min = 3)
+    @Size(min = 3, message = "{productNameShouldBeMinimum}")
     private String name;
     //private String quantity_per_unit;
-    @NotNull
+    @NotNull(message = "{notNull}")
     @Min(value = 0, message = "Fiyat değeri 0'dan küçük olamaz")
     private float unit_price;
-    @NotNull
+
+    @NotNull(message = "{notNull}")
     @PositiveOrZero(message = "Stoktaki ürün sayısı 0 veya daha büyük olmalıdır.")
     private int unit_in_stock;
     private String reorder_level;
     private int discontinued;
-    @NotNull(message = "supplier_id boş bırakılamaz")
-    @Min(1)
+    @PositiveOrZero(message = "{zeroOrThan}")
+    @NotNull(message = "{notNull}")
     private int supplier_id;
-    @NotNull(message = "category_id boş bırakılamaz")
-    @Min(1)
+
+    @PositiveOrZero(message = "{zeroOrThan}")
+    @NotNull(message = "{notNull}")
     private int category_id;
 }

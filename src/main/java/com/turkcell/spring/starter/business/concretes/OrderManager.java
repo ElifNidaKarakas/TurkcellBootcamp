@@ -2,16 +2,19 @@ package com.turkcell.spring.starter.business.concretes;
 
 import com.turkcell.spring.starter.business.abstracts.OrderDetailService;
 import com.turkcell.spring.starter.business.abstracts.OrderService;
-import com.turkcell.spring.starter.business.exceptions.BusinessException;
+import com.turkcell.spring.starter.core.exceptions.BusinessException;
 import com.turkcell.spring.starter.entities.Customer;
 import com.turkcell.spring.starter.entities.Employee;
 import com.turkcell.spring.starter.entities.Order;
 import com.turkcell.spring.starter.entities.dtos.order.OrderForAddDto;
 import com.turkcell.spring.starter.entities.dtos.order.OrderForListingDto;
 import com.turkcell.spring.starter.entities.dtos.order.OrderForUpdateDto;
-import com.turkcell.spring.starter.repositories.CustomerRepository;
-import com.turkcell.spring.starter.repositories.EmployeeRepository;
 import com.turkcell.spring.starter.repositories.OrderRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,15 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderManager implements OrderService {
+    private final MessageSource messageSource;
+
     private final OrderRepository orderRepository;
+
     private final OrderDetailService orderDetailService;
 
-    public OrderManager(OrderRepository orderRepository, OrderDetailService orderDetailService) {
-        this.orderRepository = orderRepository;
-        this.orderDetailService = orderDetailService;
-    }
-
+    private final ModelMapper modelMapper;
 
     @Override
     public List<OrderForListingDto> getAll() {
@@ -36,7 +39,13 @@ public class OrderManager implements OrderService {
     }
 
     @Override
+    @Transactional
     public void add(OrderForAddDto request) {
+        freightWithNumberBiggerThanTwentyOne(request);
+        shipCityWithSameNameShouldNotExist(request);
+        requiredDateCannotBePastTenseThanLocalDate(request.getRequiredDate());
+
+
         Order order = Order.builder()
                 .customer(Customer.builder().customerId(request.getCustomer_id()).build())
                 .orderDate(LocalDate.now())
@@ -47,17 +56,31 @@ public class OrderManager implements OrderService {
                 .shipName(request.getShipName())
                 .shipRegion(request.getShipRegion())
                 .build();
+        Order orderFromAutoMapping = modelMapper.map(request, Order.class);
 
-        order = orderRepository.save(order);  // gönderen hesaptan parayı düş
+
+        orderFromAutoMapping = orderRepository.save(orderFromAutoMapping);  // gönderen hesaptan parayı düş
+
+        // bu satırdan sonra order'ın id alanı set edilmiş..
+        orderDetailService.addItemsToOrder(orderFromAutoMapping, request.getItems()); // gönderilen hesaba parayı göndermek
+
+      /*  order = orderRepository.save(order);  // gönderen hesaptan parayı düş
 
         // bu satırdan sonra order'ın id alanı set edilmiş..
         orderDetailService.addItemsToOrder(order, request.getItems()); // gönderilen hesaba parayı göndermek
+*/
+        /*Order orderFromAutoMapping = modelMapper.map(request, Order.class);
+
+        orderFromAutoMapping = orderRepository.save(orderFromAutoMapping);
+        orderDetailService.addItemsToOrder(orderFromAutoMapping, request.getItems()); // gönderilen hesaba parayı göndermek
+    */
     }
 
     @Override
     public void updateOrder(int orderId, OrderForUpdateDto order) {
         this.orderWithShippedDateGreaterThanOrderDate(order.getOrderDate(), order.getShippedDate());
         this.OrderNameCanNotBeEmpty(order.getShipName());
+        orderWithSameNameShouldNotExist(order.getShipName());
 
         Order updateOrder = new Order();
         updateOrder.setOrderId(order.getId());
@@ -78,12 +101,43 @@ public class OrderManager implements OrderService {
 
     @Override
     public void deleteOrder(int orderId) {
-
-        Order order = new Order();
-        orderRepository.deleteById(orderId);
-
-
+       Order orderToDelete = returnOrderByIdIfExists(orderId);
+        orderRepository.delete(orderToDelete);
     }
+
+    private void orderWithSameNameShouldNotExist(String shipName) {
+        Order orderWithSameName = orderRepository.findByShipName(shipName);
+
+        if (orderWithSameName != null && orderWithSameName.getShipName().length() >= 20) {
+            throw new BusinessException
+                    (messageSource.getMessage("OrderNameLength",
+                            null, LocaleContextHolder.getLocale()));
+        }
+    }
+
+    //Required Date kullanıcı tarafından gönderilmeli ve o günün tarihinden daha geçmiş bir tarih gönderilmemelidir.+
+    private void requiredDateCannotBePastTenseThanLocalDate(LocalDate requiredDate) {
+        if (requiredDate.isBefore(LocalDate.now())) {
+            throw new BusinessException
+                    (messageSource.getMessage("OrderDateControl", null, LocaleContextHolder.getLocale()));
+        }
+    }
+
+    private void freightWithNumberBiggerThanTwentyOne(OrderForAddDto request) {
+        // Order orderWithBiggerThan = orderRepository.findByShipCountry(shipCountry);
+        if (request.getFreight() <= 21.5) {
+            throw new BusinessException
+                    (messageSource.getMessage("FreightControl", null, LocaleContextHolder.getLocale()));
+        }
+    }
+
+    private void shipCityWithSameNameShouldNotExist(OrderForAddDto request) {
+        // Order orderWithSameName = orderRepository.findByShipCity(shipCity);
+        if (request.getShipCity() == null)
+            throw new BusinessException
+                    (messageSource.getMessage("CityNameNotNull", null, LocaleContextHolder.getLocale()));
+    }
+
 
     public void orderWithShippedDateGreaterThanOrderDate(LocalDate orderDate, LocalDate shippedDate) {
         int date = orderDate.compareTo(shippedDate);
@@ -98,5 +152,14 @@ public class OrderManager implements OrderService {
         if (shipNameEmpty == null) {
             throw new BusinessException("alıcı adı boş olamaz");
         }
+    }
+
+    private Order returnOrderByIdIfExists(int orderId) {
+        Order orderToDelete = orderRepository.findById(orderId);
+        if (orderToDelete == null)
+            throw new BusinessException
+                    (messageSource.getMessage("OrderIdControl",
+                            null, LocaleContextHolder.getLocale()));
+        return orderToDelete;
     }
 }

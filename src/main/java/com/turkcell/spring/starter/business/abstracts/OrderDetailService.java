@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface OrderDetailService {
     void addItemsToOrder(Order order, List<OrderDetailForAddDto> items);
+    List<Object> getForListing();
 }
