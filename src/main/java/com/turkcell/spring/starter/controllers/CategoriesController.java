@@ -25,6 +25,7 @@ public class CategoriesController {
 
     @GetMapping()
     public List<CategoryForListingDto> getCategories() {
+        //test commit
         List<CategoryForListingDto> categoriesInDb = categoryService.getAll();
         return categoriesInDb;
     }
