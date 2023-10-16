@@ -13,14 +13,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Order findById(int id);
 
-    Order findByShipCity(String shipCity);
-
-    Order findByFreight(Float freight);
 
 
-    @Query(value = "SELECT new " +
-            "com.turkcell.spring.workshop.entities.dtos.Order.OrderForListingDto" +
-            "(o.orderId,o.orderDate,o.requiredDate,o.shipVia,o.freight,o.shipName,o.shipCity,o.shipRegion,o.shipCountry) FROM Order o")
+    @Query(value="SELECT new " +
+            "com.turkcell.spring.starter.entities.dtos.order.OrderForListingDto(o.id,o.orderDate,o.requiredDate,o.shippedDate,o.shipVia,o.freight,o.shipName,o.shipAddress,o.shipCity,o.shipRegion,o.shipPostalCode,o.shipCountry) FROM Order o")
     List<OrderForListingDto> getForListing();
 
 }

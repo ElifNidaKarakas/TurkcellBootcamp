@@ -14,11 +14,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Product findById(int id);
 
-    List<Product> UnitsInStockGreaterThanEqual(short UnitsInStock);
+    // List<Product> UnitsInStockGreaterThanEqual(int UnitsInStock);
 
-    List<Product> findByQuantityUnitIsNotNull();
+    // List<Product> findByQuantityUnitIsNotNull();
 
-    List<Product> findByQuantityUnitIsNull();
+    //  List<Product> findByQuantityUnitIsNull();
 
 
     @Query(value = "SELECT new " +

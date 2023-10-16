@@ -41,4 +41,5 @@ public class OrderForUpdateDto {
     @NotBlank(message = "Ülke  alanı boş bırakılamaz")
     private String shipCountry;
 
+
 }

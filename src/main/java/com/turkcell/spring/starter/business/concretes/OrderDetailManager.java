@@ -41,14 +41,6 @@ public class OrderDetailManager implements OrderDetailService {
     }
 
     //Eğer ilgili üründen talep edilen adet kadar yoksa adet verilebilecek max. stok olarak güncellenmelidir.
-    private short RequestedProductCannotExceedTheNumberOfProductsInStock(short quantity, int productID) {
 
-        short unitsInStock = productService.getUnitInStock(productID);
-        if (quantity > unitsInStock) {
-            //   productService.setUnitInStock(unitsInStock,productID);
-            return unitsInStock;
-        }
-        //  productService.setUnitInStock(quantity,productID);
-        return quantity;
-    }
+
 }

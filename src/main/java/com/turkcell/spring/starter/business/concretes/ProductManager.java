@@ -17,7 +17,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,24 +43,24 @@ public class ProductManager implements ProductService {
         return productRepository.findById(id).getUnit_price();
     }
 
-    @Override
-    public short getUnitInStock(int id) {
-        return (short) productRepository.findById(id).getUnits_in_stock();
+
+    /*@Override
+    public int getUnitInStock(int id) {
+        return (int) productRepository.findById(id).getUnits_in_stock();
     }
 
     //Siparişe eklenen her ürünün stok adeti quantity kadar azaltılmalıdır. +
-    public void setUnitInStock(short quantity, int id) {
+    public void setUnitInStock(String quantity, int id) {
         Product product = productRepository.findById(id);
-        product.setUnits_in_stock((short) (product.getUnits_in_stock() - quantity));
-        productRepository.save(product);
+        product.setUnits_in_stock((int) (product.getUnits_in_stock()-quantity));
+        productRepository.save(product);*/
 
-    }
 
 
     public void add(ProductForAddDto request) {
         productWithSameNameShouldNotExist(request.getName());
 
-        Product newProduct = Product.builder()
+       /* Product newProduct = Product.builder()
                 .name(request.getName())
                 .unit_price(request.getUnit_price())
                 .units_in_stock(request.getUnit_in_stock())
@@ -69,9 +68,10 @@ public class ProductManager implements ProductService {
                 .supplier(Supplier.builder().supplierId(request.getSupplier_id()).build())
                 .discontinued(0)
                 .build();
+                 productRepository.save(newProduct);*/
 
-
-        productRepository.save(newProduct);
+        Product productFromAutoMapping = modelMapper.map(request, Product.class);
+        productRepository.save(productFromAutoMapping);
     }
 
 
@@ -82,7 +82,7 @@ public class ProductManager implements ProductService {
         this.productWithSameNameShouldNotExist(updateProduct.getName());
 
 
-        Product product = productRepository.findById(productId);
+      /*  Product product = productRepository.findById(productId);
         product.setId(updateProduct.getId());
         product.setName(updateProduct.getName());
         product.setQuantity_per_unit(updateProduct.getQuantity_per_unit());
@@ -101,7 +101,9 @@ public class ProductManager implements ProductService {
         //product.setSupplier(supplier);
         product.setCategory(category);
 
-        productRepository.save(product);
+        productRepository.save(product);*/
+        Product productFromAutoMapping = modelMapper.map(updateProduct, Product.class);
+        productRepository.save(productFromAutoMapping);
     }
 
     @Override
@@ -116,14 +118,16 @@ public class ProductManager implements ProductService {
 
     private void productMinUnitPrice(ProductForAddDto request) {
         if (request.getUnit_price() < 0) {
-            throw new BusinessException("Fiyat değeri 0'dan küçük olamaz.");
+            throw new BusinessException
+                    (messageSource.getMessage("productPriceNotNegative", null, LocaleContextHolder.getLocale()));
         }
     }
 
     private void productNameCanNotBeEmpty(String productName) {
         Product productNameEmpty = productRepository.findByName(productName);
         if (productNameEmpty != null) {
-            throw new BusinessException("Ürün adı alanı boş bırakılamaz");
+            throw new BusinessException
+                    (messageSource.getMessage("productNameEmpty", null, LocaleContextHolder.getLocale()));
         }
     }
 
@@ -131,7 +135,8 @@ public class ProductManager implements ProductService {
     private void checkIfProductExistById(int id) {
         Product productId = productRepository.findById(id);
         if (productId == null) {
-            throw new BusinessException("id değeri bulunamadı ");
+            throw new BusinessException
+                    (messageSource.getMessage("productDoesNotExistWithGivenId", null, LocaleContextHolder.getLocale()));
         }
 
     }
@@ -147,7 +152,6 @@ public class ProductManager implements ProductService {
     private Product returnProductByIdIfExists(int id) {
         Product productToDelete = productRepository.findById(id);
         if (productToDelete == null)
-            //throw new BusinessException("Böyle bir ürün bulunamadı.");
             throw new BusinessException
                     (messageSource.getMessage("productNotFound", null, LocaleContextHolder.getLocale()));
         return productToDelete;

@@ -31,9 +31,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query(value = "SELECT * FROM categories WHERE category_name LIKE %:categoryName%", nativeQuery = true)
     List<Category> searchNative(String categoryName);
 
-    @Query(value = "SELECT new " +
-            "com.turkcell.spring.workshop.entities.dtos.Category.CategoryForListingDto" +
-            "(c.categoryId, c.categoryName,c.description) FROM Category c")
+    @Query(value="SELECT new " +
+            "com.turkcell.spring.starter.entities.dtos.category.CategoryForListingDto(c.categoryId, c.categoryName, c.description) FROM Category c")
     List<CategoryForListingDto> getForListing();
 }
 

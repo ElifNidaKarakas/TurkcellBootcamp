@@ -7,7 +7,7 @@ import lombok.Data;
 @Data // Getter+Setter
 public class CategoryForAddDto {
     @NotBlank(message = "Kategori adı girmek zorunludur!")
-    @Size(min=3,max=10,  message="{categoryNameShouldBeMinimum}")
+    @Size(min=3,max=50,  message="{categoryNameShouldBeMinimum}")
     private String categoryName;
 
     @NotBlank(message = "Açıklama girmek zorunludur!")

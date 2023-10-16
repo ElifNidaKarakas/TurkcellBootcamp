@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="product_name")
+    @Column(name = "product_name")
     private String name;
 
     @Column(name = "quantity_per_unit")
@@ -29,7 +29,7 @@ public class Product {
     @Column(name = "units_in_stock")
     private int units_in_stock;
     @Column(name = "units_on_order")
-    private int  units_on_order;
+    private int units_on_order;
     @Column(name = "reorder_level")
     private String reorder_level;
     @Column(name = "discontinued")
@@ -44,7 +44,7 @@ public class Product {
     private List<OrderDetail> orderDetails;
 
     @ManyToOne()
-    @JoinColumn(name="supplier_id")
+    @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 }
 

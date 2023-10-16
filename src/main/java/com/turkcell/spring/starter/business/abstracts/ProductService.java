@@ -12,12 +12,6 @@ public interface ProductService {
     List<ProductForGetByIdDto> getById(int id);
     void add(ProductForAddDto request);
     void updateProduct(int productId, ProductForUpdateDto product);
-
     void deleteProduct(int id);
-
     float getByUnitPrice(int id);
-
-    short getUnitInStock(int id);
-
-    void setUnitInStock(short quantity,int id);
 }

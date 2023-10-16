@@ -1,7 +1,5 @@
 package com.turkcell.spring.starter.controllers;
 
-// CTRL + SPACE => Intelissense'i triggerlar
-
 import com.turkcell.spring.starter.entities.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -17,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("home")
 @RequiredArgsConstructor
-    public class HomeController {
+public class HomeController {
     private final MessageSource messageSource;
     List<Product> productList = new ArrayList<>();
 
@@ -80,6 +78,4 @@ import java.util.List;
 
 
     // Her bir temel entitynin kendi controllerinin bulunması best practicedir.
-
-
 }
