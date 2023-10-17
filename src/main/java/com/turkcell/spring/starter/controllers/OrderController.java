@@ -7,6 +7,7 @@ import com.turkcell.spring.starter.entities.dtos.order.OrderForUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,18 +30,18 @@ public class OrderController {
     @PostMapping()
     public ResponseEntity addOrder(@RequestBody @Valid OrderForAddDto order) {
         orderService.add(order);
-        return new ResponseEntity(("sipariş eklendi"), HttpStatus.CREATED);
+        return new ResponseEntity(messageSource.getMessage("OrderAdded", null , LocaleContextHolder.getLocale()), HttpStatus.CREATED);
     }
 
     @PutMapping()
     public ResponseEntity updateOrder(@PathVariable int orderId, @RequestBody @Valid OrderForUpdateDto updateDto) {
         orderService.updateOrder(updateDto.getId(), updateDto);
-        return new ResponseEntity("sipariş güncellendi", HttpStatus.CREATED);
+        return new ResponseEntity((messageSource.getMessage("OrderUpdate", null , LocaleContextHolder.getLocale())), HttpStatus.OK);
     }
 
     @DeleteMapping()
     public ResponseEntity deleteOrder(@PathVariable("orderId") int orderId) {
         orderService.deleteOrder(orderId);
-        return new ResponseEntity("sipariş silindi", HttpStatus.OK);
+        return new ResponseEntity(messageSource.getMessage("orderDeleted",new Object[] {orderId}, LocaleContextHolder.getLocale()), HttpStatus.OK);
     }
 }

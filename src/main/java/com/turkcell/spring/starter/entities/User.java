@@ -35,7 +35,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // roller
         // todo: refactor with multiple roles
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role));  //tek rollu liste olusturuluyor istersek yanına yeni roller de ekleyebiliriz.
     }
 
 
