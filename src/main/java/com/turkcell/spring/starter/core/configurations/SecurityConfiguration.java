@@ -4,6 +4,7 @@ import com.turkcell.spring.starter.core.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,10 +29,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // listedeki url'lerin auth zorunluluğu olmaması
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URLS).permitAll()
+                        .requestMatchers(HttpMethod.POST,"/categories/**").hasAnyAuthority("Admin","Category.Admin","Global.Admin")
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
