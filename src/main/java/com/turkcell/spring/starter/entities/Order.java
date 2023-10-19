@@ -30,7 +30,7 @@ public class Order {
     @Column(name = "ship_via")
     private int shipVia;
     @Column(name = "freight")
-    private float freight;
+    private String freight;
     @Column(name = "ship_name")
     private String shipName;
     @Column(name = "ship_address")

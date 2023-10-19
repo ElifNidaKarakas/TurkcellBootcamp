@@ -20,7 +20,7 @@ public class OrderForUpdateDto {
     private LocalDate requiredDate;
     private LocalDate shippedDate;
     private int shipVia;
-    private float freight;
+    private String freight;
 
     @NotBlank(message = "alıcı isim alanı boş bırakılamaz")
     @Size(min = 3, max = 50)

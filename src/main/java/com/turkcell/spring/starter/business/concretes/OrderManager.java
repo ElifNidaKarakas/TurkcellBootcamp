@@ -41,7 +41,7 @@ public class OrderManager implements OrderService {
     @Override
     @Transactional
     public void add(OrderForAddDto request) {
-        freightWithNumberBiggerThanTwentyOne(request);
+       // freightWithNumberBiggerThanTwentyOne(request);
         shipCityWithSameNameShouldNotExist(request);
         requiredDateCannotBePastTenseThanLocalDate(request.getRequiredDate());
 
@@ -115,13 +115,13 @@ public class OrderManager implements OrderService {
         }
     }
 
-    private void freightWithNumberBiggerThanTwentyOne(OrderForAddDto request) {
+    /*private void freightWithNumberBiggerThanTwentyOne(OrderForAddDto request) {
         // Order orderWithBiggerThan = orderRepository.findByShipCountry(shipCountry);
         if (request.getFreight() <= 21.5) {
             throw new BusinessException
                     (messageSource.getMessage("FreightControl", null, LocaleContextHolder.getLocale()));
         }
-    }
+    }*/
 
     private void shipCityWithSameNameShouldNotExist(OrderForAddDto request) {
         // Order orderWithSameName = orderRepository.findByShipCity(shipCity);

@@ -15,7 +15,7 @@ public class OrderForAddDto {
     private LocalDate requiredDate;
     private LocalDate shippedDate;
     private int shipVia;
-    private float freight;
+    private String freight;
     private String shipName;
     private String shipAddress;
     private String shipCity;
